@@ -10,25 +10,29 @@ class RabbitMq implements IpcInterface
 {
     private $connection;
     private $channel;
+    private $channelName;
 
     public function __construct(ConfigInterface $config)
     {
         $this->connection = new AMQPStreamConnection(
-            $config->get('QUEUE_HOST'),
-            $config->get('QUEUE_PORT'),
-            $config->get('QUEUE_USER'),
-            $config->get('QUEUE_PASSWORD'),
+            $config->get('RABBITMQ_HOST'),
+            $config->get('RABBITMQ_PORT'),
+            $config->get('RABBITMQ_USER'),
+            $config->get('RABBITMQ_PASSWORD'),
         );
 
         $this->channel = $this->connection->channel();
 
-        $this->channel->queue_declare($config->get('QUEUE_NAME'));
+        $this->channelName = $config->get('RABBITMQ_QUEUE');
+
+        $this->channel->queue_declare($this->channelName);
+
     }
 
-    public function listen(string $channel, callable $callback): void
+    public function listen(callable $callback): void
     {
         $this->channel->basic_consume(
-            $channel, 
+            $this->channelName, 
             '', 
             false, 
             true, 
@@ -42,7 +46,7 @@ class RabbitMq implements IpcInterface
         }
     }
 
-    public function send(string $channel, string $message): void
+    public function send(string $message): void
     {
         $this->channel->basic_publish($message);
     }
