@@ -1,7 +1,9 @@
 <?php
 
+namespace App\Contracts;
+
 interface ConfigInterface
 {
-    public function __constructor(string $path);
+    public function __construct(string $path);
     public function get(string $key): string;
 }

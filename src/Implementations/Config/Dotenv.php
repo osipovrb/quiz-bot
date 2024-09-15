@@ -2,7 +2,9 @@
 
 namespace App\Implementations\Config;
 
-class Dotenv
+use App\Contracts\ConfigInterface;
+
+class Dotenv implements ConfigInterface
 {
     private $dotenv;
 
