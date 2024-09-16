@@ -6,11 +6,14 @@ use App\Container;
 use App\Contracts\ConfigInterface;
 use App\Contracts\DatabaseInterface;
 use App\Contracts\IpcInterface;
+use App\Contracts\Quiz\BotInterface;
 use App\Contracts\Quiz\Questions\QuestionsRepositoryInterface;
 use App\Contracts\Quiz\Questions\QuestionsSeederInterface;
 use App\Implementations\Config\Dotenv;
 use App\Implementations\Database\Sqlite;
+use App\Implementations\Ipc\Console;
 use App\Implementations\Ipc\RabbitMq;
+use App\Implementations\Quiz\Bot;
 use App\Implementations\Quiz\Questions\QuestionsSeeder;
 use App\Implementations\Quiz\Questions\QuestionsRepository;
 
@@ -40,6 +43,21 @@ $container->bind(QuestionsSeederInterface::class, function() use ($container) {
     );
 });
 
+$container->bind(IpcInterface::class, function () {
+    return new Console();
+});
+
+$container->bind(BotInterface::class, function() use($container) {
+    return new Bot(
+        $container->get(QuestionsRepositoryInterface::class),
+        $container->get(IpcInterface::class),
+        $container->get(ConfigInterface::class),
+    );
+});
+
 // trigger seeder
 $container->get(DatabaseInterface::class)->connect();
 $container->get(QuestionsSeederInterface::class)->seed();
+
+// start bot
+$container->get(BotInterface::class)->start();

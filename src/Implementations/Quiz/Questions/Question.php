@@ -30,6 +30,6 @@ class Question implements QuestionInterface
 
     public function isAnswerCorrect(string $answer): bool
     {
-        return $this->answer === $answer;
+        return trim($this->answer) === trim($answer);
     }
 }

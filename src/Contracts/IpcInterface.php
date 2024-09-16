@@ -2,8 +2,11 @@
 
 namespace App\Contracts;
 
+use App\Dto\EventPayload;
+
 interface IpcInterface
 {
-    public function listen(callable $callback): void;
-    public function send(string $message): void;
+    function __construct();
+    public function setListenCallback(callable $callback): void;
+    public function send(EventPayload $paylod): void;
 }
