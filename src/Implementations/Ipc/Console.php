@@ -63,7 +63,7 @@ class Console implements IpcInterface
     private function sendIncorrectAnswer(AnswerPayload $payload): void
     {
         $this->stdio->write("\033[31mНеверно!\033[0m Попробуйте ещё." . PHP_EOL);
-        $this->listen("[ $payload->remaininSeconds ] > ");
+        $this->listen("[ $payload->remainingSeconds ] > ");
 
     }
 
