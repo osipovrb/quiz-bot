@@ -4,6 +4,7 @@ namespace App\Implementations\Ipc;
 
 use App\Contracts\IpcInterface;
 use App\Dto\EventPayloads\AnswerPayload;
+use App\Dto\EventPayloads\HintPayload;
 use App\Dto\EventPayloads\QuestionPayload;
 use App\Dto\EventPayloads\RemainingSecondsPayload;
 use App\Dto\EventPayloads\StartPayload;
@@ -13,7 +14,7 @@ use Clue\React\Stdio\Stdio;
 
 class Console implements IpcInterface
 {
-    private $stdio;
+    private readonly Stdio $stdio;
 
     public function __construct()
     {
@@ -36,10 +37,11 @@ class Console implements IpcInterface
     {
         $routes = [
             EventsEnum::START->value => 'sendStart',
-            EventsEnum::CORRECT_ANSWER->value => 'sendCorrectAnswer',
-            EventsEnum::INCORRECT_ANSWER->value => 'sendIncorrectAnswer',
             EventsEnum::QUESTION->value => 'sendQuestion',
             EventsEnum::REMAINING_SECONDS->value => 'sendRemainingSeconds',
+            EventsEnum::HINT->value => 'sendHint',
+            EventsEnum::CORRECT_ANSWER->value => 'sendCorrectAnswer',
+            EventsEnum::INCORRECT_ANSWER->value => 'sendIncorrectAnswer',
             EventsEnum::QUESTION_TIMED_OUT->value => 'sendQuestionTimedOut',
         ];
 
@@ -60,26 +62,33 @@ class Console implements IpcInterface
         $this->listen("[ $payload->remainingSeconds ] > ");
     }
 
+    private function sendRemainingSeconds(RemainingSecondsPayload $payload): void
+    {
+        $this->listen("[ $payload->remainingSeconds ] > ");
+    }
+
+    private function sendHint(HintPayload $payload): void
+    {
+        $this->stdio->write(
+            "Подсказка: $payload->answerMask (всего букв: $payload->answerLength)"
+            . PHP_EOL
+        );
+    }
+
+    private function sendCorrectAnswer(AnswerPayload $payload): void
+    {
+        $this->stdio->write(
+            "\033[32mВерно!\033[0m Правильный ответ - \"$payload->answer\"."
+            . PHP_EOL
+        );
+    }
+
     private function sendIncorrectAnswer(AnswerPayload $payload): void
     {
         $this->stdio->write("\033[31mНеверно!\033[0m Попробуйте ещё." . PHP_EOL);
         $this->listen("[ $payload->remainingSeconds ] > ");
 
     }
-
-    private function sendCorrectAnswer(AnswerPayload $payload): void
-    {
-        $this->stdio->write(
-            "\033[32mВерно!\033[0m Правильный ответ - \"$payload->answer\"." 
-            . PHP_EOL
-        );
-    }
-
-    private function sendRemainingSeconds(RemainingSecondsPayload $payload): void
-    {
-        $this->listen("[ $payload->remainingSeconds ] > ");
-    }
-
     private function sendQuestionTimedOut(): void
     {
         $this->stdio->write("\033[33mВы не ответили на вопрос :(\033[0m" . PHP_EOL);

@@ -11,6 +11,7 @@ class RabbitMq implements IpcInterface
     private $connection;
     private $channel;
     private $channelName;
+    private $listenCallback;
 
     public function __construct(ConfigInterface $config)
     {
@@ -26,19 +27,36 @@ class RabbitMq implements IpcInterface
         $this->channelName = $config->get('RABBITMQ_QUEUE');
 
         $this->channel->queue_declare($this->channelName);
-
     }
 
-    public function listen(callable $callback): void
+    public function setListenCallback(callable $listenCallback): void
     {
+        $this->listenCallback = $listenCallback;
+    }
+
+    public function listen(): void
+    {
+        if (!is_callable($this->listenCallback)) {
+            throw new \Exception('Listen callback is not set');
+        }
+
+        $parseMessage = function($msg) {
+            $json = json_decode($msg, true);
+            call_user_func(
+                [$this, 'listenCallback'], 
+                $json['user_id'], 
+                $json['message']
+            );
+        };
+
         $this->channel->basic_consume(
-            $this->channelName, 
-            '', 
-            false, 
-            true, 
-            false, 
-            false, 
-            $callback
+            $this->channelName,
+            '',
+            false,
+            true,
+            false,
+            false,
+            $parseMessage
         );
 
         while ($this->channel->is_consuming()) {
@@ -46,8 +64,8 @@ class RabbitMq implements IpcInterface
         }
     }
 
-    public function send(string $message): void
+    public function send(string $event, array $payload): void
     {
-        $this->channel->basic_publish($message);
+        $this->channel->basic_publish(json_encode($payload));
     }
 }

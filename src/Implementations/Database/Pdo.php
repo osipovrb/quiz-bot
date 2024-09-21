@@ -6,7 +6,7 @@ use App\Contracts\DatabaseInterface;
 
 abstract class Pdo implements DatabaseInterface
 {
-    protected $pdo;
+    protected ?\PDO $pdo;
 
     abstract public function connect(?string $connectionString = null): void;
 

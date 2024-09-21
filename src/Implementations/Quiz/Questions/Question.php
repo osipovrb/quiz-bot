@@ -2,34 +2,26 @@
 
 namespace App\Implementations\Quiz\Questions;
 
-use App\Contracts\Quiz\Questions\QuestionInterface;
-
-class Question implements QuestionInterface
+class Question
 {
     public function __construct(
-        public readonly int $id,
-        public readonly string $title,
-        public readonly string $answer
+        private readonly int $id,
+        private readonly string $title,
+        private readonly string $answer
     ) {}
 
     public function getTitle(): string
     {
-        return $this->title;
+        return trim($this->title);
     }
 
     public function getAnswer(): string
     {
-        return $this->answer;
-    }
-
-    public function getHint(int $uncoverPercentage = 5): string
-    {
-        // ...
-        return '...';
+        return trim($this->answer);
     }
 
     public function isAnswerCorrect(string $answer): bool
     {
-        return trim($this->answer) === trim($answer);
+        return $this->getAnswer() === trim($answer);
     }
 }

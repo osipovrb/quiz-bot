@@ -10,7 +10,6 @@ class QuestionsSeeder implements QuestionsSeederInterface
 {
     public function __construct(
         private readonly DatabaseInterface $db,
-        private readonly QuestionsRepositoryInterface $repo
     ) {}
 
     public function seed(): void
@@ -21,7 +20,9 @@ class QuestionsSeeder implements QuestionsSeederInterface
             answer TEXT NOT NULL
         );');
 
-        if ($this->repo->getQuestionsCount() === 0) {
+        [$result] = $this->db->fetch("SELECT COUNT(*) AS count FROM questions");
+
+        if (intval($result['count']) === 0) {
             // query
             $query = 'INSERT INTO questions (title, answer) VALUES(?, ?)';
             // parsing questions file
