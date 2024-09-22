@@ -13,5 +13,4 @@ RUN docker-php-ext-install sockets
 RUN composer install
 RUN composer dump-autoload
 
-# Указываем точку входа в консольное приложение
 ENTRYPOINT ["php", "/app/src/cli.php"]
