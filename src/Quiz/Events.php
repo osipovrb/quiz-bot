@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Implementations\Quiz;
+namespace App\Quiz;
 
 use App\Contracts\IpcInterface;
 use App\Dto\EventPayload;

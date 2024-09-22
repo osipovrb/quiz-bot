@@ -1,5 +1,5 @@
 <?php
-
+/*
 namespace App\Implementations\Ipc;
 
 use App\Contracts\ConfigInterface;
@@ -70,3 +70,4 @@ class RabbitMq implements IpcInterface
         $this->channel->basic_publish(json_encode($payload));
     }
 }
+*/

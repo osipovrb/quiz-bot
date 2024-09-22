@@ -1,7 +1,7 @@
 <?php
 /** @noinspection PhpUnused */
 
-namespace App\Implementations\Ipc;
+namespace App\Adapters\Ipc;
 
 use App\Contracts\IpcInterface;
 use App\Dto\EventPayload;

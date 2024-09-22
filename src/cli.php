@@ -2,14 +2,14 @@
 
 require 'vendor/autoload.php';
 
+use App\Adapters\Config\Dotenv;
+use App\Adapters\Database\Sqlite;
+use App\Adapters\Ipc\Console;
 use App\Container;
 use App\Contracts\ConfigInterface;
 use App\Contracts\DatabaseInterface;
 use App\Contracts\IpcInterface;
-use App\Implementations\Config\Dotenv;
-use App\Implementations\Database\Sqlite;
-use App\Implementations\Ipc\Console;
-use App\Implementations\Quiz\Quiz;
+use App\Quiz\Quiz;
 
 $container = new Container();
 

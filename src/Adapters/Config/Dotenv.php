@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Implementations\Config;
+namespace App\Adapters\Config;
 
 use App\Contracts\ConfigInterface;
 

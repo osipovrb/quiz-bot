@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Implementations\Quiz\Questions;
+namespace App\Quiz\Questions;
 
 use App\Contracts\DatabaseInterface;
 use App\Exceptions\QuizException;

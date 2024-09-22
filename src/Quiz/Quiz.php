@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Implementations\Quiz;
+namespace App\Quiz;
 
 use App\Contracts\ConfigInterface;
 use App\Contracts\DatabaseInterface;
 use App\Contracts\IpcInterface;
-use App\Implementations\Quiz\Questions\Question;
-use App\Implementations\Quiz\Questions\QuestionHint;
-use App\Implementations\Quiz\Questions\QuestionsRepository;
-use App\Implementations\Quiz\Questions\QuestionsSeeder;
+use App\Quiz\Questions\Question;
+use App\Quiz\Questions\QuestionHint;
+use App\Quiz\Questions\QuestionsRepository;
+use App\Quiz\Questions\QuestionsSeeder;
 use React\EventLoop\Loop;
 
 class Quiz
