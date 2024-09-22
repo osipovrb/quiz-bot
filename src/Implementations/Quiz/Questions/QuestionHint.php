@@ -2,21 +2,34 @@
 
 namespace App\Implementations\Quiz\Questions;
 
-use App\Dto\EventPayloads\HintPayload;
-
-class QuestionHint {
+class QuestionHint
+{
     /**
      * @var int[]
      */
     private readonly array $revealIndices;
 
-    function __construct(private readonly string $answer) {
+    public function __construct(private readonly string $answer)
+    {
         $this->revealIndices = $this->generateRevealIndices();
     }
 
-    public function getAnswerLength(): int
+    /**
+     * @return int[]
+     */
+    private function generateRevealIndices(): array
     {
-        return mb_strlen($this->answer);
+        // indices of answer string
+        $lettersIndices = range(0, mb_strlen($this->answer) - 1);
+
+        // remove space indices: there are no sense in revealing spaces
+        preg_match_all('/\s/u', $this->answer, $matches, PREG_OFFSET_CAPTURE);
+        $spaceIndices = array_map(fn($match) => $match[1], $matches[0] ?? []);
+        $revealIndices = array_diff($lettersIndices, $spaceIndices);
+
+        shuffle($revealIndices);
+
+        return $revealIndices;
     }
 
     public function getAnswerMask(int $revealPercentage): string
@@ -32,7 +45,8 @@ class QuestionHint {
         $revealIndices = array_slice($this->revealIndices, 0, $revealCount);
 
         // reveal letters
-        $answerArr = preg_split('//u', $this->answer, null, PREG_SPLIT_NO_EMPTY);
+        $answerArr =
+            preg_split('//u', $this->answer, null, PREG_SPLIT_NO_EMPTY);
         $maskArr = preg_split('//u', $mask, null, PREG_SPLIT_NO_EMPTY);
         foreach ($revealIndices as $revealIndex) {
             $maskArr[$revealIndex] = $answerArr[$revealIndex];
@@ -40,22 +54,9 @@ class QuestionHint {
 
         return implode($maskArr);
     }
-
-    /*
-     * @return int[] letter indices to be revealed
-     */
-    private function generateRevealIndices(): array
+    
+    public function getAnswerLength(): int
     {
-        $lettersIndices = range(0, mb_strlen($this->answer) - 1);
-
-        // removing space indices from mask indices: there are no sense in revealing spaces
-        preg_match_all('/\s/u', $this->answer, $matches, PREG_OFFSET_CAPTURE);
-        $spaceIndices = array_map(fn($match) => $match[1], $matches[0] ?? []);
-        $revealIndices = array_diff($lettersIndices, $spaceIndices);
-
-        // shuffling in advance just to make it easy to reveal letters later
-        shuffle($revealIndices);
-
-        return $revealIndices;
+        return mb_strlen($this->answer);
     }
 }

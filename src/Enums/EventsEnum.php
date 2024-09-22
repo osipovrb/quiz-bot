@@ -2,7 +2,8 @@
 
 namespace App\Enums;
 
-enum EventsEnum: string {
+enum EventsEnum: string
+{
     case START = 'start';
     case QUESTION = 'question';
     case REMAINING_SECONDS = 'remaining_seconds';

@@ -2,4 +2,6 @@
 
 namespace App\Exceptions;
 
-class ContainerException extends DomainException {}
+class ContainerException extends DomainException
+{
+}

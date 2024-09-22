@@ -3,6 +3,7 @@
 namespace App\Implementations\Database;
 
 use App\Contracts\DatabaseInterface;
+use Exception;
 
 abstract class Pdo implements DatabaseInterface
 {
@@ -10,20 +11,24 @@ abstract class Pdo implements DatabaseInterface
 
     abstract public function connect(?string $connectionString = null): void;
 
-    protected function pdoConnect(string $connectionString): void
-    {
-        $this->pdo = new \PDO($connectionString);
-        $this->pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
-    }
-
-    public function execute(string $query): int
-    {
-        return $this->pdo->exec($query);
-    }
-
     public function fetch(string $query): array
     {
         return $this->pdo->query($query, \PDO::FETCH_ASSOC)->fetchAll();
+    }
+
+    public function transaction(string $query, array $args): void
+    {
+        $statement = $this->pdo->prepare($query);
+        try {
+            $this->pdo->beginTransaction();
+            foreach ($args as $row) {
+                $statement->execute($row);
+            }
+            $this->pdo->commit();
+        } catch (Exception $e) {
+            $this->pdo->rollback();
+            throw $e;
+        }
     }
 
     public function prepare(string $query, array $args): array
@@ -34,19 +39,14 @@ abstract class Pdo implements DatabaseInterface
         return $statement->fetchAll();
     }
 
-    public function transaction(string $query, array $args): void
+    public function execute(string $query): int
     {
-        $statement = $this->pdo->prepare($query);
-        try {
-            $this->pdo->beginTransaction();
-            foreach ($args as $row)
-            {
-                $statement->execute($row);
-            }
-            $this->pdo->commit();
-        } catch (\Exception $e) {
-            $this->pdo->rollback();
-            throw $e;
-        }
+        return $this->pdo->exec($query);
+    }
+
+    protected function pdoConnect(string $connectionString): void
+    {
+        $this->pdo = new \PDO($connectionString);
+        $this->pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
     }
 }

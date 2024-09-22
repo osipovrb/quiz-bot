@@ -7,21 +7,22 @@ use App\Contracts\DatabaseInterface;
 class QuestionsRepository
 {
     public function __construct(private readonly DatabaseInterface $db)
-    {}
+    {
+    }
 
     public function getRandomQuestion(): Question
     {
-        $result = $this->db->fetch(
-            "SELECT id, title, answer FROM questions ORDER BY RANDOM() LIMIT 1"
-        )[0];
+        [$result] = $this->db->fetch(
+            "SELECT title, answer FROM questions ORDER BY RANDOM() LIMIT 1"
+        );
 
-        return new Question($result['id'], $result['title'], $result['answer']);
+        return new Question($result['title'], $result['answer']);
     }
 
     public function getQuestionsCount(): int
     {
-      $result = $this->db->fetch('SELECT COUNT(*) as count FROM questions');
+        [$result] = $this->db->fetch('SELECT COUNT(*) as count FROM questions');
 
-      return $result[0]['count'];
+        return $result['count'];
     }
 }

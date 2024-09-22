@@ -4,7 +4,8 @@ namespace App\Implementations\Quiz;
 
 use App\Contracts\ConfigInterface;
 
-class Config {
+class Config
+{
     public readonly int $questionTime;
     public readonly array $hintsTiming;
     public readonly array $hintsRevealPercentage;

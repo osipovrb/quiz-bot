@@ -4,6 +4,7 @@ namespace App\Dto\EventPayloads;
 
 class StartPayload
 {
-    function __construct(public readonly int $questionsCount)
-    {}
+    public function __construct(public readonly int $questionsCount)
+    {
+    }
 }

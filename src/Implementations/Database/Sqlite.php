@@ -3,13 +3,15 @@
 namespace App\Implementations\Database;
 
 use App\Contracts\ConfigInterface;
-use App\Implementations\Database\Pdo;
 
 class Sqlite extends Pdo
 {
-    public function __construct(private ConfigInterface $cfg) {}
+    public function __construct(private readonly ConfigInterface $cfg)
+    {
+    }
 
-    public function connect(?string $connectionString = null): void {
+    public function connect(?string $connectionString = null): void
+    {
         $file = $this->cfg->get('SQLITE_FILE');
         parent::pdoConnect("sqlite:$file");
     }

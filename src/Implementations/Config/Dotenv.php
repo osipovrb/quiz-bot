@@ -6,7 +6,7 @@ use App\Contracts\ConfigInterface;
 
 class Dotenv implements ConfigInterface
 {
-    private $dotenv;
+    private \Dotenv\Dotenv $dotenv;
 
     public function __construct(string $path)
     {
@@ -14,7 +14,8 @@ class Dotenv implements ConfigInterface
         $this->dotenv->load();
     }
 
-    public function get(string $key): string {
+    public function get(string $key): string
+    {
         $this->dotenv->required($key);
 
         return $_ENV[$key];

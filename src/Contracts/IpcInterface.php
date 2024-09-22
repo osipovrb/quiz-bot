@@ -6,7 +6,9 @@ use App\Dto\EventPayload;
 
 interface IpcInterface
 {
-    function __construct();
+    public function __construct();
+
     public function setListenCallback(callable $callback): void;
+
     public function send(EventPayload $payload): void;
 }

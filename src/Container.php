@@ -24,7 +24,9 @@ class Container
         }
 
         if (!isset($this->bindings[$name])) {
-            throw new ContainerException("Service $name not found in container");
+            throw new ContainerException(
+                "Service $name not found in container"
+            );
         }
 
         $this->instances[$name] = $this->bindings[$name]($this);

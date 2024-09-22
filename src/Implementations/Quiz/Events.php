@@ -10,11 +10,12 @@ use App\Dto\EventPayloads\QuestionPayload;
 use App\Dto\EventPayloads\RemainingSecondsPayload;
 use App\Dto\EventPayloads\StartPayload;
 use App\Enums\EventsEnum;
-use Relay\Event;
 
 class Events
 {
-    public function __construct(private readonly IpcInterface $ipc) {}
+    public function __construct(private readonly IpcInterface $ipc)
+    {
+    }
 
     public function start(int $questionsCount): void
     {
@@ -41,8 +42,7 @@ class Events
         int $userId,
         string $answer,
         int $remainingSeconds
-    ): void
-    {
+    ): void {
         $event = $isAnswerCorrect
             ? EventsEnum::CORRECT_ANSWER
             : EventsEnum::INCORRECT_ANSWER;

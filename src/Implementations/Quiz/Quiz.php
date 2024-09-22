@@ -8,6 +8,7 @@ use App\Contracts\IpcInterface;
 use App\Implementations\Quiz\Questions\Question;
 use App\Implementations\Quiz\Questions\QuestionHint;
 use App\Implementations\Quiz\Questions\QuestionsRepository;
+use App\Implementations\Quiz\Questions\QuestionsSeeder;
 use React\EventLoop\Loop;
 
 class Quiz
@@ -29,6 +30,8 @@ class Quiz
         $this->config = new Config($this->baseConfig);
         $this->repo = new QuestionsRepository($this->database);
         $this->events = new Events($ipc);
+
+        (new QuestionsSeeder($this->database))->seed();
     }
 
     public function start(): void

@@ -4,6 +4,7 @@ namespace App\Implementations\Ipc;
 
 use App\Contracts\ConfigInterface;
 use App\Contracts\IpcInterface;
+use Exception;
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 
 class RabbitMq implements IpcInterface
@@ -37,14 +38,14 @@ class RabbitMq implements IpcInterface
     public function listen(): void
     {
         if (!is_callable($this->listenCallback)) {
-            throw new \Exception('Listen callback is not set');
+            throw new Exception('Listen callback is not set');
         }
 
-        $parseMessage = function($msg) {
+        $parseMessage = function ($msg) {
             $json = json_decode($msg, true);
             call_user_func(
-                [$this, 'listenCallback'], 
-                $json['user_id'], 
+                [$this, 'listenCallback'],
+                $json['user_id'],
                 $json['message']
             );
         };
