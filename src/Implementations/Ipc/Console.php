@@ -1,4 +1,5 @@
 <?php
+/** @noinspection PhpUnused */
 
 namespace App\Implementations\Ipc;
 
@@ -14,6 +15,8 @@ use Clue\React\Stdio\Stdio;
 
 class Console implements IpcInterface
 {
+    private const STOP_WORD = "выход";
+
     private readonly Stdio $stdio;
 
     public function __construct()
@@ -24,11 +27,15 @@ class Console implements IpcInterface
     public function setListenCallback(callable $callback): void
     {
         $this->stdio->on('data', function ($line) use ($callback) {
-            call_user_func($callback, 0, rtrim($line, "\r\n"));
+            $answer = rtrim($line, "\r\n");
+            if ($answer === self::STOP_WORD) {
+                exit(0);
+            }
+            call_user_func($callback, 0, $answer);
         });
     }
 
-    public function send(EventPayload $payload): void// TODO: dto
+    public function send(EventPayload $payload): void
     {
         $routes = [
             EventsEnum::START->value => 'sendStart',
@@ -48,7 +55,9 @@ class Console implements IpcInterface
     {
         $this->stdio->write("Викторина началась! В базе данных ");
         $this->stdio->write("$payload->questionsCount вопросов" . PHP_EOL);
-        $this->stdio->write("Для выхода нажмите CTRL+C" . PHP_EOL);
+        $this->stdio->write(
+            "Для выхода нажмите CTRL+C или введите " . self::STOP_WORD . PHP_EOL
+        );
     }
 
     private function sendQuestion(QuestionPayload $payload): void

@@ -16,6 +16,9 @@ abstract class Pdo implements DatabaseInterface
         return $this->pdo->query($query, \PDO::FETCH_ASSOC)->fetchAll();
     }
 
+    /**
+     * @throws Exception
+     */
     public function transaction(string $query, array $args): void
     {
         $statement = $this->pdo->prepare($query);

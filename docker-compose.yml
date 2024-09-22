@@ -1,0 +1,14 @@
+services:
+  quiz:
+    build: .
+    container_name: quiz
+    volumes:
+      - .:/app/db-data
+    networks:
+      - quiz
+    tty: true
+    stdin_open: true
+
+networks:
+  quiz:
+    driver: bridge

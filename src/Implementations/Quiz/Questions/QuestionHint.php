@@ -46,15 +46,15 @@ class QuestionHint
 
         // reveal letters
         $answerArr =
-            preg_split('//u', $this->answer, null, PREG_SPLIT_NO_EMPTY);
-        $maskArr = preg_split('//u', $mask, null, PREG_SPLIT_NO_EMPTY);
+            preg_split('//u', $this->answer, 0, PREG_SPLIT_NO_EMPTY);
+        $maskArr = preg_split('//u', $mask, 0, PREG_SPLIT_NO_EMPTY);
         foreach ($revealIndices as $revealIndex) {
             $maskArr[$revealIndex] = $answerArr[$revealIndex];
         }
 
         return implode($maskArr);
     }
-    
+
     public function getAnswerLength(): int
     {
         return mb_strlen($this->answer);
