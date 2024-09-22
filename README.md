@@ -7,6 +7,7 @@
 ```shell
 $ git clone https://github.com/osipovrb/quiz-bot.git
 $ cd quiz-bot
+$ cp src/.env.example src/.env
 $ docker build -t quiz .
 ```
 
