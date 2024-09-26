@@ -2,35 +2,48 @@
 
 namespace App;
 
-use App\Exceptions\ContainerException;
+use Psr\Container\ContainerInterface;
+use Psr\Container\NotFoundExceptionInterface;
 
-class Container
+class Container implements ContainerInterface
 {
+    /**
+     * @var array<string, callable>
+     */
     private array $bindings = [];
+
+    /**
+     * @var array<string, object>
+     */
     private array $instances = [];
 
-    public function bind(string $name, callable $resolver): void
+    public function bind(string $id, callable $resolver): void
     {
-        $this->bindings[$name] = $resolver;
+        $this->bindings[$id] = $resolver;
     }
 
     /**
-     * @throws ContainerException
+     * @throws NotFoundExceptionInterface
      */
-    public function get(string $name): mixed
+    public function get(string $id): mixed
     {
-        if (isset($this->instances[$name])) {
-            return $this->instances[$name];
+        if (isset($this->instances[$id])) {
+            return $this->instances[$id];
         }
 
-        if (!isset($this->bindings[$name])) {
-            throw new ContainerException(
-                "Service $name not found in container"
-            );
+        if (!$this->has($id)) {
+            throw new class extends \Exception
+                implements NotFoundExceptionInterface {
+            };
         }
 
-        $this->instances[$name] = $this->bindings[$name]($this);
+        $this->instances[$id] = $this->bindings[$id]($this);
 
-        return $this->instances[$name];
+        return $this->bindings[$id];
+    }
+
+    public function has(string $id): bool
+    {
+        return isset($this->instances[$id]);
     }
 }
